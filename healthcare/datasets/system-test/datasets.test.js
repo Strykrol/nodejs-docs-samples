@@ -44,63 +44,77 @@ after(() => {
   } catch (err) {} // Ignore error
 });
 
-it('should create a dataset', () => {
-  const output = execSync(
-    `node createDataset.js ${projectId} ${cloudRegion} ${datasetId}`
-  );
-  assert.ok(output.includes('Created dataset'));
-});
-
-it('should get a dataset', () => {
-  const output = execSync(
-    `node getDataset.js ${projectId} ${cloudRegion} ${datasetId}`,
-  );
-  assert.ok(output.includes('name'));
-});
-
-it('should patch a dataset', () => {
-  const timeZone = 'GMT';
-  const output = execSync(
-    `node patchDataset.js ${projectId} ${cloudRegion} ${datasetId} ${timeZone}`,
-  );
-  assert.ok(
-    output.includes('patched with time zone')
-  );
-});
-
-it('should list datasets', () => {
-  const output = execSync(`node listDatasets.js ${projectId} ${cloudRegion}`, {
+describe('healthcare_create_dataset', () => {
+  it('should create a dataset', () => {
+    const output = execSync(
+      `node createDataset.js ${projectId} ${cloudRegion} ${datasetId}`
+    );
+    assert.ok(output.includes('Created dataset'));
   });
-  assert.ok(output.includes('datasets'));
 });
 
-it('should de-identify data in a dataset and write to a new dataset', () => {
-  const output = execSync(
-    `node deidentifyDataset.js ${projectId} ${cloudRegion} ${datasetId} ${destinationDatasetId} ${keeplistTags}`,
-  );
-  assert.ok(
-    output.includes('De-identified data written')
-  );
+describe('healthcare_get_dataset', () => {
+  it('should get a dataset', () => {
+    const output = execSync(
+      `node getDataset.js ${projectId} ${cloudRegion} ${datasetId}`,
+    );
+    assert.ok(output.includes('name'));
+  });
 });
 
-it('should create and get a dataset IAM policy', () => {
-  const localMember = 'group:dpebot@google.com';
-  const localRole = 'roles/viewer';
-
-  let output = execSync(
-    `node setDatasetIamPolicy.js ${projectId} ${cloudRegion} ${datasetId} ${localMember} ${localRole}`,
-  );
-  assert.ok(output.includes, 'ETAG');
-
-  output = execSync(
-    `node getDatasetIamPolicy.js ${projectId} ${cloudRegion} ${datasetId}`
-  );
-  assert.ok(output.includes('dpebot'));
+describe('healthcare_patch_dataset', () => {
+  it('should patch a dataset', () => {
+    const timeZone = 'GMT';
+    const output = execSync(
+      `node patchDataset.js ${projectId} ${cloudRegion} ${datasetId} ${timeZone}`,
+    );
+    assert.ok(
+      output.includes('patched with time zone')
+    );
+  });
 });
 
-it('should delete a dataset', () => {
-  const output = execSync(
-    `node deleteDataset.js ${projectId} ${cloudRegion} ${datasetId}`,
-  );
-  assert.ok(output.includes('Deleted dataset'));
+describe('healthcare_list_datasets', () => {
+  it('should list datasets', () => {
+    const output = execSync(`node listDatasets.js ${projectId} ${cloudRegion}`, {
+    });
+    assert.ok(output.includes('datasets'));
+  });
+});
+
+describe('healthcare_dicom_keeplist_deidentify_dataset', () => {
+  it('should de-identify data in a dataset and write to a new dataset', () => {
+    const output = execSync(
+      `node deidentifyDataset.js ${projectId} ${cloudRegion} ${datasetId} ${destinationDatasetId} ${keeplistTags}`,
+    );
+    assert.ok(
+      output.includes('De-identified data written')
+    );
+  });
+});
+
+describe('healthcare_create_dataset healthcare_dataset_set_iam_policy', () => {
+  it('should create and get a dataset IAM policy', () => {
+    const localMember = 'group:dpebot@google.com';
+    const localRole = 'roles/viewer';
+
+    let output = execSync(
+      `node setDatasetIamPolicy.js ${projectId} ${cloudRegion} ${datasetId} ${localMember} ${localRole}`,
+    );
+    assert.ok(output.includes, 'ETAG');
+
+    output = execSync(
+      `node getDatasetIamPolicy.js ${projectId} ${cloudRegion} ${datasetId}`
+    );
+    assert.ok(output.includes('dpebot'));
+  });
+});
+
+describe('healthcare_delete_dataset', () => {
+  it('should delete a dataset', () => {
+    const output = execSync(
+      `node deleteDataset.js ${projectId} ${cloudRegion} ${datasetId}`,
+    );
+    assert.ok(output.includes('Deleted dataset'));
+  });
 });
